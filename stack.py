@@ -94,8 +94,27 @@ def stack_42583(bridge_length, weight, truck_weights):
             else:
                 bridge_queue.append(0)
     return count
-bridge_length=2
-weight=10
-truck_weights=	[7,4,5,6]
+# bridge_length=2
+# weight=10
+# truck_weights=	[7,4,5,6]
 
-print(stack_42583(bridge_length, weight, truck_weights))
+# print(stack_42583(bridge_length, weight, truck_weights))
+
+
+def stack_42584(prices):
+    prices_queue=deque(prices)
+    result=[]
+    while (len(prices_queue)>=1):
+        count=0
+        temp=prices_queue.popleft()
+    
+        for i in prices_queue:
+            count+=1
+            if temp>i:
+                break
+        result.append(count)
+    
+    return result
+        
+# prices=[4,2,4,2,3,1,2]
+# print(stack_42584(prices))
