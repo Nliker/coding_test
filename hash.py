@@ -79,9 +79,9 @@ def hash_42579(genres,plays):
     result=[]
     for (genre,v) in sorted_g_h:
         sorted_g_i=sorted(g_h_i[genre],key=lambda index:(-plays[index],index))
-        result.append(sorted_g_i[:2])
+        result.extend(sorted_g_i[:2])
     
-    return sum(result,[])
+    return result
         
 genres=["pop","pop","classic","classic","classic","classic","elec"]	
 plays=[450,450,500, 500, 150, 800,550]	
