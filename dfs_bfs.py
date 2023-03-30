@@ -56,22 +56,40 @@ def bfs_stack(graph,node,visited):
 # print(bfs_stack(graph,1,visited),visited)
 
 def dfs_target(numbers,target,depth):
-    count=0
     if depth==len(numbers):
         if target==0:
             return 1
         return 0
-    count+=dfs_target(numbers,target+numbers[depth],depth+1)
-    count+=dfs_target(numbers,target-numbers[depth],depth+1)
+    return dfs_target(numbers,target+numbers[depth],depth+1)+dfs_target(numbers,target-numbers[depth],depth+1)
+
+def bfs_target(numbers,target):
+    numbers=deque(numbers)
+    to_do_list=deque()
+    to_do_list.append((0,0))
+    count=0
+    print(to_do_list)
+    while len(to_do_list)>=1:
+        index,number=to_do_list.popleft()
+        if index==len(numbers) and number==target:
+            count+=1
+        if index<len(numbers):
+            plus=number+numbers[index]
+            minus=number-numbers[index]
+            to_do_list.append((index+1,plus))
+            to_do_list.append((index+1,minus))
+        print(to_do_list)
+        
     return count
+print(bfs_target([1,1,1,1,1],3))
+
 
 def dfs_bfs_43165(numbers, target):
     result=dfs_target(numbers,target,0)
     return result
 
-# numbers=[4, 1, 2, 1]
-# target=	4
-# print(dfs_bfs_43165(numbers,target))
+numbers=[1,1,1,1,1]
+target=	3
+print(dfs_bfs_43165(numbers,target))
 
 
 def dfs_bfs_1844(maps):
@@ -112,7 +130,7 @@ def dfs_bfs_test(maps):
     return -1 if des_distance==1 else des_distance 
 
 maps=[[1,0,1,1,1],[1,0,1,0,1],[1,0,1,1,1],[1,1,1,0,1],[0,0,0,0,1]]
-print(dfs_bfs_test(maps))
+# print(dfs_bfs_test(maps))
 
 def dfs_bfs_area_test(maps):
     visited=[[False]*len(maps[0]) for i in range(len(maps))]
@@ -133,12 +151,43 @@ def dfs_bfs_area_test(maps):
                     for x,y in indexes:
                         if x>=0 and x<=len(maps)-1 and y>=0 and y<=len(maps[0])-1 and maps[x][y]==1 and visited[x][y]==False:
                             list.append((x,y))     
-                            visited[x][y]=True                
+                            visited[x][y]=True         
     for i in visited:
         print(i)
     return count_list
+
+def dfs_area_test(maps,x,y):
+    visited=[[0]*len(maps[0]) for i in range(len(maps))]
+    list=deque()
+    list.append((x,y)) 
+    x_offset=[-1,1,0,0]
+    y_offset=[0,0,-1,1]
+    visited[x][y]=1
+    count=0
+    while len(list)>0:
+        print(list)
+        count+=1
+        x,y=list.popleft()
+        visited[x][y]=1
+        maps[x][y]=count
+        for map in maps:
+            print(map) 
+        indexes=[(x+x_offset[i],y+y_offset[i]) for i in range(4)]
+        for x,y in indexes:
+            if x>=0 and x<=len(maps)-1 and y>=0 and y<=len(maps[0])-1 and maps[x][y]==1 and visited[x][y]==0:
+                list.append((x,y))     
+                # visited[x][y]=1
+        print("=========================")
+        # for visit in visited:
+        #     print(visit)      
+    # for map in maps:
+    #     print(map)
+    return count
+
 # maps=[[1,0,1,1,1],[1,0,1,0,1],[1,0,1,1,1],[1,1,1,0,1],[0,0,0,0,1]]
-# print(dfs_bfs_test(maps))
+maps=[[0,1,1,1,0],[0,1,1,1,0],[0,1,1,1,0],[0,1,1,1,0],[0,1,1,1,0]]
+# print(dfs_bfs_area_test(maps))
+# print(dfs_area_test(maps,0,1))
             
 def dfs_bfs_43162(n,computers):
     visited=[False for i in range(n)]
@@ -289,21 +338,39 @@ def dfs_bfs_43164(tickets):
 #     return "good"
 # print(print_bfs(list))
 
+# def dj(graph,node):
+#     min_dis=[10000 for i in range(len(graph))]
+#     min_dis[node]=0
+#     to_do_list=[]
+#     heappush(to_do_list,(0,node))
+#     while len(to_do_list)>=1:
+#         dis,do=heappop(to_do_list)
+#         if min_dis[do]<dis:
+#             continue
+#         for to_do,to_do_dis in graph[do]:
+#             if dis+to_do_dis<min_dis[to_do]:
+#                 min_dis[to_do]=dis+to_do_dis
+#                 heappush(to_do_list,(min_dis[to_do],to_do))
+                
+#     return min_dis
+
 def dj(graph,node):
     min_dis=[10000 for i in range(len(graph))]
     min_dis[node]=0
     to_do_list=[]
+    visited=[False for i in range(len(graph)) ]
     heappush(to_do_list,(0,node))
     while len(to_do_list)>=1:
         dis,do=heappop(to_do_list)
-        if min_dis[do]<dis:
-            continue
         for to_do,to_do_dis in graph[do]:
             if dis+to_do_dis<min_dis[to_do]:
                 min_dis[to_do]=dis+to_do_dis
-                heappush(to_do_list,(min_dis[to_do],to_do))
+                if visited[to_do]==False:
+                    heappush(to_do_list,(min_dis[to_do],to_do))
+                    visited[to_do]=True
                 
     return min_dis
+
 graph1=[
     [(2,1),(3,3),(4,3)],
     [(6,2),(4,2)],
@@ -323,9 +390,10 @@ graph3=[
     [(1,3)],
     [(0,4)]
 ]
-for i in range(len(graph1)):  
-    print(dj(graph1,i))
-print("=============")
+# for i in range(len(graph1)):
+#     print(dj(graph1,i))
+# print(dj(graph1,0))
+# print("=============")
 def flood(graph):
     inf=100000000
     n=len(graph)
@@ -335,7 +403,7 @@ def flood(graph):
     for do,to_do_list in enumerate(graph):
         for to_do,dis in to_do_list:
             min_dis[do][to_do]=dis
-            min_dis[to_do][do]=dis
+            # min_dis[to_do][do]=dis
     
     for i in range(n):
         for j in range(n):
@@ -348,6 +416,6 @@ def flood(graph):
     
     return 1
 
-print(flood(graph1))
+# print(flood(graph1))
 
 
