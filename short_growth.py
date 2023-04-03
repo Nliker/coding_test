@@ -174,9 +174,9 @@ def bj_11066():
         result.append(dp_list[1][n])
     return result
 
-result=bj_11066()
-for min_cost in result:
-    print(min_cost)
+# result=bj_11066()
+# for min_cost in result:
+#     print(min_cost)
 # f(1,2)->f(1,1)+f(2,2)
 # f(1,3)->f(1,1)+f(2,3)
 #         f(1,2)+f(3,3)
@@ -188,3 +188,54 @@ for min_cost in result:
 # B
 # C
 # D
+
+def bj_11049():
+    n=int(input())
+    array_list=[0]+[list(map(int,sys.stdin.readline().rstrip().split())) for _ in range(n)]
+    dp_list=[[0 for _ in range(n+1)] for _ in range(n+1)]
+    for i in range(n,0,-1):
+        for j in range(i+1,n+1):            
+            dp_list[i][j]=min([dp_list[i][k]+dp_list[k+1][j]+(array_list[i][0]*array_list[k][1]*array_list[j][1]) for k in range(i,j)])
+    return dp_list[1][n]
+# print(bj_11049())
+
+def bj_12865():
+    n,k=map(int,input().split())
+    w_v=[list(map(int,input().split())) for _ in range(n)]
+    d_p_map=[0 for _ in range(k+1)]
+    for i in range(n):
+        tmp=[0 for _ in range(k+1)]
+        for j in range(1,k+1):
+            weight,value=w_v[i]
+            if j-weight<0:
+                tmp[j]=d_p_map[j]
+            else:
+                tmp[j]=max(d_p_map[j-weight]+value,d_p_map[j])
+        d_p_map=tmp   
+    return d_p_map[-1]
+# print(bj_12865())
+
+def bj_7579():
+    n,m=map(int,input().split())
+    app_memory=[0]+list(map(int,input().split()))
+    app_cost=[0]+list(map(int,input().split()))
+    dp_map=[1000000000 for _ in range(m+1)]
+    for app_index in range(1,n+1):
+        tmp=[0 for _ in range(m+1)]
+        for memory in range(0,m+1):
+            if memory<=app_memory[app_index]:
+                tmp[memory]=min(dp_map[memory],app_cost[app_index])
+            else:
+                tmp[memory]=min(dp_map[memory],dp_map[memory-app_memory[app_index]]+app_cost[app_index])
+        dp_map=tmp
+
+    return dp_map[-1]
+
+# print(bj_7579())
+
+        
+
+
+
+
+
