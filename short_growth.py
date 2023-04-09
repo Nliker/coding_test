@@ -233,9 +233,287 @@ def bj_7579():
 
 # print(bj_7579())
 
+
+def bj_11404():
+    n=int(input())
+    m=int(input())
+    inf=100000000
+    flood_map=[[inf for _ in range(n+1)] for _ in range(n+1)]
+    for i in range(n+1):
+        flood_map[i][i]=0
+    for i in range(m):
+        start,end,cost=map(int,input().split())
+        if flood_map[start][end]>cost:
+            flood_map[start][end]=cost
+    # for flood in flood_map:
+    #     print(flood[1:])
+
+    for i in range(1,n+1):
+        for j in range(1,n+1):
+            for k in range(1,n+1):
+                flood_map[j][k]=min(flood_map[j][k],flood_map[j][i]+flood_map[i][k])
+                # flood_map[i][j]=min(flood_map[i][j],flood_map[i][k]+flood_map[k][j])
+    for i in range(1,n+1):
+        for j in range(1,n+1):
+            if flood_map[i][j]==inf:
+                flood_map[i][j]=0
         
+    return [maps[1: ]for maps in flood_map[1:]]
+
+# result=bj_11404()
+# for maps in result:
+#     print(*maps)
+
+def bj_1956():
+    v,e=map(int,input().split())
+    inf=100000000
+    flood_map=[[inf for _ in range(v+1)] for _ in range(v+1)]
+    for i in range(e):
+        start,end,cost=map(int,input().split())
+        flood_map[start][end]=cost
+    for i in range(1,v+1):
+        for j in range(1,v+1):
+            for k in range(1,v+1):
+                flood_map[j][k]=min(flood_map[j][k],flood_map[j][i]+flood_map[i][k])
+    min_cost=inf
+    for i in range(1,v+1):
+        if flood_map[i][i]<min_cost:
+            min_cost=flood_map[i][i]
+    if min_cost==inf:
+        return -1
+    return min_cost
+
+# print(bj_1956())
+
+def bj_17404():
+    h=int(input())
+    rgb_list=[[0,0,0]]+[list(map(int,input().split())) for _ in range(h)]
+    inf=1000000000
+    ans=inf
+    for i in range(3):
+        dp_list=[[0,0,0]]+[[inf,inf,inf] for _ in range(h)]
+        dp_list[1][i]=rgb_list[1][i]
+        for j in range(2,h+1):
+            dp_list[j][0]=rgb_list[j][0]+min(dp_list[j-1][1],dp_list[j-1][2])
+            dp_list[j][1]=rgb_list[j][1]+min(dp_list[j-1][0],dp_list[j-1][2])
+            dp_list[j][2]=rgb_list[j][2]+min(dp_list[j-1][0],dp_list[j-1][1])
+        for j in range(3):
+            if i!=j:
+                ans=min(ans,dp_list[h][j])
+    return ans
+
+# print(bj_17404())
+
+def bj_14002():
+    n=int(input())
+    num_list=list(map(int,input().split()))
+    dp_list=[[num_list[i]] for i in range(n)]
+    for i in range(n-2,-1,-1):
+        max_count=0
+        max_index=None
+        for j in range(i+1,n):
+            if num_list[i]<num_list[j] and len(dp_list[j])>max_count:
+                max_count=len(dp_list[j])
+                max_index=j
+        if max_index:
+            dp_list[i].extend([*dp_list[max_index]])  
+    return (max(dp_list,key=lambda x:len(x)))
+# result=bj_14002()
+# print(len(result))
+# print(" ".join(str(num) for num in result))
+
+def bj_9252():
+    string1=" "+input()
+    string2=" "+input()
+    dp_list=[[0 for _ in range(len(string1))] for _ in range(len(string2))]
+    for i in range(1,len(string2)):
+        for j in range(1,len(string1)):
+            if string1[j]==string2[i]:
+                dp_list[i][j]=dp_list[i-1][j-1]+1
+            else:
+                dp_list[i][j]=max(dp_list[i][j-1],dp_list[i-1][j])
+    result=[]
+    x=len(string1)-1
+    y=len(string2)-1
+    while x>0 and y>0:
+        if dp_list[y][x-1]==dp_list[y][x]:
+            x-=1
+        elif dp_list[y-1][x]==dp_list[y][x]:
+            y-=1
+        else:
+            result.append(string1[x])
+            x-=1
+            y-=1
+    return "".join(reversed(result))
+
+# result=bj_9252()
+# print(len(result))
+# if result:
+#     print(result)
+
+def bj_1019():
+    n=int(input())
+    units=n%10
+    tens=n//10
+    first_list=[tens+1 for _ in range(10)]
+    tens_list=[0 for _ in range(10)]
+    for i in range(10):
+        tens_list[i]+=tens//10*100
+        if tens%10>=i:
+            tens_list[i]+=(tens%10)*10
+    result=[first_list[i]+tens_list[i] for i in range(10)]
+    for i in range(9,units,-1):
+        result[i]-=1
+        result[tens%10]-=1
+    result[0]-=1
+    print(result)
+    
+            
+    
+    
+    return 1
+
+# print(bj_1019())
 
 
+def bj_1916():
+    n=int(input())
+    cost_list=[[] for _ in range(n+1)]
+    m=int(input())
+    for i in range(m):
+        start,end,cost=map(int,input().split())
+        cost_list[start].append((end,cost))
+    start,end=map(int,input().split())
 
+    min_dis=[10000000000 for i in range(n+1)]
+    min_dis[start]=0
+    to_do_list=[]
+    heappush(to_do_list,(0,start))
+    while len(to_do_list)>=1:
+        print(to_do_list)
+        print("min_dis",min_dis)
+        dis,do=heappop(to_do_list)
+        if min_dis[do]<dis:
+            continue
+        for to_do,to_do_dis in cost_list[do]:
+            if dis+to_do_dis<min_dis[to_do]:
+                min_dis[to_do]=dis+to_do_dis
+                heappush(to_do_list,(min_dis[to_do],to_do))
+    return min_dis[end]
+# print(bj_1916())
 
+def bj_11779():
+    n=int(input())
+    cost_list=[[] for _ in range(n+1)]
+    m=int(input())
+    for i in range(m):
+        start,end,cost=map(int,input().split())
+        cost_list[start].append((end,cost))
+    start,end=map(int,input().split())
+
+    min_dis=[10000000000 for i in range(n+1)]
+    min_dis[start]=0
+    to_do_list=[]
+    path_list=[0 for _ in range(n+1)]
+    heappush(to_do_list,(0,start))
+    while len(to_do_list)>=1:
+        dis,do=heappop(to_do_list)
+
+        if min_dis[do]<dis:
+            continue
+
+        for to_do,to_do_dis in cost_list[do]:
+            if dis+to_do_dis<min_dis[to_do]:
+                min_dis[to_do]=dis+to_do_dis
+                path_list[to_do]=do
+                heappush(to_do_list,(min_dis[to_do],to_do))
+    result=[]
+    back_track=end
+    while path_list[back_track]!=0:
+        result.append(back_track)
+        back_track=path_list[back_track]
+    result.append(start)
+    result=list(reversed(result))
+    return (result,min_dis[end])
+# path_list,min_dis=bj_11779()
+# print(min_dis)
+# print(len(path_list))
+# print(" ".join([str(city) for city in path_list]))
+
+def bj_1976():
+    n=int(input())
+    m=int(input())
+    inf=10000000000000
+    dis_list=[[inf for _ in range(n+1)] for _ in range(n+1)]
+    for i in range(n):
+        load_list=list(map(int,input().split()))
+        for j in range(n):
+            if load_list[j]==1:
+                dis_list[i+1][j+1]=1
+                dis_list[j+1][i+1]=1
+    for i in range(n+1):
+        dis_list[i][i]=1
+    travel_list=list(map(int,input().split()))
+    for i in range(1,n+1):
+        for j in range(1,n+1):
+            for k in range(1,n+1):
+                dis_list[j][k]=min(dis_list[j][k],dis_list[j][i]+dis_list[i][k])
+    for i in range(len(travel_list)-1):
+        pre_city=travel_list[i]
+        next_city=travel_list[i+1]
+        if dis_list[pre_city][next_city]>=inf:
+            return "NO"
+    return "YES"
+
+# print(bj_1976())
+def find_par(x,list):
+    if x==list[x]:
+        return x
+    list[x]=find_par(list[x],list)
+    return list[x]
+
+def bj_10775():
+    G=int(input())
+    Gate_list=[i for i in range(G+1)]
+    P=int(input())
+    # arrive_list=[int(input()) for _ in range(P)]
+    arrive_list=[i for i in range(2000,1,-1)]+[1500]
+    count=0
+    for arrive_num in arrive_list:
+        print(arrive_num)
+        max_gate=find_par(arrive_num,Gate_list)
+        if max_gate==0:
+            return count
+        Gate_list[max_gate]=find_par(max_gate-1,Gate_list)
+        print(Gate_list)
+        count+=1
+    return count
+
+# print(bj_10775())
+
+def find_par(x,list):
+    if x==list[x]:
+        return x
+    list[x]=find_par(list[x],list)
+    return list[x]
+
+def bj_1197():
+    v,e=map(int,input().split())
+    edges=[list(map(int,input().split())) for _ in range(e)]
+    sorted_edge=sorted(edges,key=lambda x:x[2])
+    parent=[i for i in range(v+1)]
+    min_cost=0
+    for start,end,cost in sorted_edge:
+        start_parent=find_par(start,parent)
+        right_parent=find_par(end,parent)
+        if start_parent!=right_parent:
+            min_cost+=cost
+            if start_parent<right_parent:
+                parent[right_parent]=start_parent
+            else:
+                parent[start_parent]=right_parent
+
+    return min_cost
+
+print(bj_1197())
 
