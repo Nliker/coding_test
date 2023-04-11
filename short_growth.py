@@ -2,7 +2,7 @@ from collections import deque
 import sys
 import copy
 from heapq import heappop,heappush,heapify
-import math
+import math 
 
 def bj_12865():
     n,k=map(int,input().split())
@@ -546,3 +546,112 @@ def bj_4386():
     return round(min_cost,3)
 
 # print(bj_4386())
+
+
+def bj_10282():
+    test=int(input())
+    result=[]
+    for _ in range(test):
+        n,d,c=map(int,input().split())
+        com=[[] for _ in range(n+1)]
+        for i in range(d):
+            start,end,cost=map(int,input().split())
+            com[end].append((start,cost))
+        inf=10000000000
+        min_cost=[inf for i in range(n+1)]
+        min_cost[c]=0
+        to_do_list=[]
+        to_do_list.append((0,c))
+        while len(to_do_list)>=1:
+            cost,do=heappop(to_do_list)
+            if min_cost[do]<cost:
+                continue
+            for to_do,to_do_cost in com[do]:
+                if cost+to_do_cost<min_cost[to_do]:
+                    min_cost[to_do]=cost+to_do_cost
+                    heappush(to_do_list,(cost+to_do_cost,to_do))
+        count=0
+        max=0
+        for i in range(1,n+1):   
+            if min_cost[i]<inf:
+                count+=1
+                if max<=min_cost[i]:
+                    max=min_cost[i]
+        result.append((count,max))
+    return result
+# result=bj_10282()
+# for count,min_cost in result:
+#     print(count,min_cost)
+
+# def bj_15681():
+#     n,r,q=map(int,input().split())
+#     graph=[[] for _ in range(n+1)]
+#     for _ in range(n-1):
+#         start,end=map(int,input().split())
+#         graph[start].append(end)
+#         graph[end].append(start)
+#     q_list=[int(input()) for _ in range(q)]
+    
+#     visited=[False for _ in range(n+1)]
+#     to_do_list=deque()
+#     visited[r]=True
+#     to_do_list.append(r)
+#     order_list=[r]
+#     direct_graph=[[] for _ in range(n+1)]
+#     while len(to_do_list)>=1:
+#         do=to_do_list.popleft()
+#         for to_do in graph[do]:
+#             if visited[to_do]==False:
+#                 to_do_list.append(to_do)
+#                 direct_graph[do].append(to_do)
+#                 order_list.append(to_do)
+#                 visited[to_do]=True
+#     order_list=list(reversed(order_list))
+#     dp_list=[0 for _ in range(n+1)]
+#     for node in order_list:
+#         if direct_graph[node]==[]:
+#             dp_list[node]=1
+#         else:
+#             count=0
+#             for child_node in direct_graph[node]:
+#                 count+=dp_list[child_node]
+#             dp_list[node]=count+1
+#     result=[]
+#     for num in q_list:
+#         result.append(dp_list[num])
+#     return result
+
+# result=bj_15681()
+# for num in result:
+#     print(num)
+    
+
+def count_subtree(do,graph,visited,dp_list):
+    visited[do]=True
+    if graph[do]==[]:
+        dp_list[do]=1
+        return 1
+    count=0
+    for to_do in graph[do]:
+        if visited[to_do]==False:
+            count+=count_subtree(to_do,graph,visited,dp_list)
+    dp_list[do]=count+1
+    return count+1
+
+def bj_15681():
+    sys.setrecursionlimit(10**5)
+    n,r,q=map(int,input().split())
+    graph=[[] for _ in range(n+1)]
+    for _ in range(n-1):
+        start,end=map(int,input().split())
+        graph[start].append(end)
+        graph[end].append(start)
+    q_list=[int(input()) for _ in range(q)]
+    visited=[False for _ in range(n+1)]
+    dp_list=[0 for _ in range(n+1)]
+    count_subtree(r,graph,visited,dp_list)
+    result=[dp_list[num] for num in q_list]
+    return result
+# result=bj_15681()
+# for num in result:
+#     print(num)
