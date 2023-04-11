@@ -515,5 +515,34 @@ def bj_1197():
 
     return min_cost
 
-print(bj_1197())
+# print(bj_1197())
 
+def find_par(x,list):
+    if x==list[x]:
+        return x
+    list[x]=find_par(list[x],list)
+    return list[x]
+
+def bj_4386():
+    n=int(input())
+    x_y=[list(map(float,input().split())) for _ in range(n)]
+    cost_list=[]
+    for i in range(n):
+        for j in range(n):
+            dis=math.sqrt((x_y[i][0]-x_y[j][0])**2+(x_y[i][1]-x_y[j][1])**2)
+            cost_list.append((i,j,dis))
+    sorted_cost=sorted(cost_list,key=lambda x:x[2])
+    par_list=[i for i in range(n)]
+    min_cost=0
+    for start,end,cost in sorted_cost:
+        start_par=find_par(start,par_list)
+        end_par=find_par(end,par_list)
+        if start_par!=end_par:
+            min_cost+=cost
+            if start_par<end_par:
+                par_list[end_par]=start_par
+            else:
+                par_list[start_par]=end_par
+    return round(min_cost,3)
+
+# print(bj_4386())
