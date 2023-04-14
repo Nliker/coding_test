@@ -655,3 +655,89 @@ def bj_15681():
 # result=bj_15681()
 # for num in result:
 #     print(num)
+
+def dfs(node,graph,dp,visited):
+    visited[node]=True
+    for next_node in graph[node]:
+        if visited[next_node]==False:
+            dfs(next_node,graph,dp,visited)
+            #node가 우수마을이 아닌 경우 해당 마을 아래포함 최대 우수마을 주민 수
+            #주변 노드는 우수마을 또는 아닌 우수마을이 아닌 경우 최대 아래포함 우수마을 주민 수
+            dp[node][0]+=max(dp[next_node])
+            #node가 우수마을인 경우 해당 마을 아래포함 최대 우수마을 주민 수
+            #주변 노드는 우수마을이 아닌 경우 아래포함 최대 우수마을 주민 수를 합
+            dp[node][1]+=dp[next_node][0]
+    
+
+def bj_1949():
+    n=int(input())
+    sys.setrecursionlimit(10**5)
+    cost_list=[0]+list(map(int,input().split()))
+    graph_list=[[] for _ in range(n+1)]
+    for _ in range(n-1):
+        start,end=map(int,input().split())
+        graph_list[start].append(end)
+        graph_list[end].append(start)
+    dp_list=[[0,cost_list[i]] for i in range(n+1)]
+    visited=[False for _ in range(n+1)]
+    dfs(1,graph_list,dp_list,visited)
+    print(dp_list)
+    return max(dp_list[1])
+# print(bj_1949())
+
+
+
+def dfs(node,graph,dp,visited):
+    visited[node]=True
+    for next_node in graph[node]:
+        if visited[next_node]==False:
+            dfs(next_node,graph,dp,visited)
+            #node가 우수마을이 아닌 경우 해당 마을 아래포함 최대 우수마을 주민 수
+            #주변 노드는 우수마을 또는 아닌 우수마을이 아닌 경우 최대 아래포함 우수마을 주민 수
+            dp[node][0]+=max(dp[next_node])
+            #node가 우수마을인 경우 해당 마을 아래포함 최대 우수마을 주민 수
+            #주변 노드는 우수마을이 아닌 경우 아래포함 최대 우수마을 주민 수를 합
+            dp[node][1]+=dp[next_node][0]
+
+def track(node,graph,dp,visited,path,picked):
+    visited[node]=True
+    for next_node in graph[node]:
+        if visited[next_node]==False:
+            if picked:
+                path.append((next_node,0))
+                track(next_node,graph,dp,visited,path,False)
+            else:
+                if dp[next_node][0]>dp[next_node][1]:
+                    path.append((next_node,0))
+                    track(next_node,graph,dp,visited,path,False)
+                else:
+                    path.append((next_node,1))
+                    track(next_node,graph,dp,visited,path,True)
+            
+def bj_2213():
+    n=int(input())
+    sys.setrecursionlimit(10**5)
+    cost_list=[0]+list(map(int,input().split()))
+    graph_list=[[] for _ in range(n+1)]
+    for _ in range(n-1):
+        start,end=map(int,input().split())
+        graph_list[start].append(end)
+        graph_list[end].append(start)
+    dp_list=[[0,cost_list[i]] for i in range(n+1)]
+    visited=[False for _ in range(n+1)]
+    path=[[],[]]
+    dfs(1,graph_list,dp_list,visited)
+    visited=[False for _ in range(n+1)]
+    path=[]
+    if dp_list[1][0]>dp_list[1][1]:
+        path.append((1,0))
+        track(1,graph_list,dp_list,visited,path,False)
+    else:
+        path.append((1,1))
+        track(1,graph_list,dp_list,visited,path,True)
+    return (max(dp_list[1]),sorted([node for node,picked in path if picked==1]))
+result=bj_2213()
+print(result[0])
+print(" ".join(list(map(str,result[1]))))
+
+
