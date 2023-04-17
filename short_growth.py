@@ -736,8 +736,77 @@ def bj_2213():
         path.append((1,1))
         track(1,graph_list,dp_list,visited,path,True)
     return (max(dp_list[1]),sorted([node for node,picked in path if picked==1]))
-result=bj_2213()
-print(result[0])
-print(" ".join(list(map(str,result[1]))))
+# result=bj_2213()
+# print(result[0])
+# print(" ".join(list(map(str,result[1]))))
 
+def bj_1701():
+    strings=input()  
+    max_lps=0
+
+    for i in range(len(strings)):
+        pat=strings[i:]
+        leng=0
+        j=1
+        lps=[0 for _ in range(len(pat))]
+        while j<len(pat):
+            if pat[j]==pat[leng]:
+                leng+=1
+                lps[j]=leng
+                j+=1
+            else:
+                if leng!=0:
+                    leng=lps[leng-1]
+                else:
+                    lps[j]=0
+                    j+=1
+        max_lps=max(max(lps),max_lps)
+    return max_lps
+# print(bj_1701())
+
+class Node:
+    def __init__(self,key=None,data=None):
+        self.key=key
+        self.data=data
+        self.children={}
+
+class Trie:
+    def __init__(self):
+        self.root=Node()
+    def insert(self,fruits):
+        current_node=self.root
+        for fruit in fruits:
+            if fruit not in current_node.children:
+                current_node.children[fruit]=Node(fruit)
+            # print(current_node.children)
+            current_node=current_node.children[fruit]
+        current_node.data=fruits
+    
+    # def dfs(self,node,depth):
+    #     for key in sorted(node.children.keys()):
+    #         print("-"*depth*2+key)
+    #         self.dfs(node.children[key],depth+1)
+            
+    def dfs(self,node,depth):
+        to_do_list=[(node,depth)]
+        while len(to_do_list)>=1:
+            node,depth=to_do_list.pop()
+            if node.key:
+                print("-"*(depth-1)*2+node.key)
+            for key in sorted(node.children.keys(),reverse=True):
+                to_do_list.append((node.children[key],depth+1))
+            
+
+         
+
+def bj_14725():
+    n=int(input ())
+    trie=Trie()
+    for i in range(n):
+        fruits=list(input().split())[1:]
+        trie.insert(fruits)
+
+    return trie
+# result=bj_14725()
+# result.dfs(result.root,0)
 
