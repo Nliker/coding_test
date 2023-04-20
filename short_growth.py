@@ -805,8 +805,80 @@ def bj_14725():
     for i in range(n):
         fruits=list(input().split())[1:]
         trie.insert(fruits)
-
+    
     return trie
 # result=bj_14725()
 # result.dfs(result.root,0)
 
+def make_lps(string,lps_list):
+    leng=0
+    i=1
+    while i<len(string):
+        if string[i]==string[leng]:
+            leng+=1
+            lps_list[i]=leng
+            i+=1
+        else:
+            if leng!=0:
+                leng=lps_list[leng-1]
+            else:
+                lps_list[i]=0
+                i+=1
+    
+def kmp_search(txt,pat,lps):
+    pat_length=len(pat)
+    txt_length=len(txt)
+
+    pat_i=0
+    txt_i=0
+    while txt_i<txt_length:
+        if pat[pat_i]==txt[txt_i]:
+            pat_i+=1
+            txt_i+=1
+        else:
+            if pat_i!=0:
+                pat_i=lps[pat_i-1]
+            else:
+                txt_i+=1
+        if pat_i==pat_length:
+            return True
+    return False
+
+def bj_10266():
+    n=int(input())
+    clock1=list(map(int,input().split()))
+    clock2=list(map(int,input().split()))
+    clock1=sorted(clock1)
+    clock2=sorted(clock2)
+    clock1_degree=[clock1[i+1]-clock1[i] if i!=n-1 else 360000-clock1[i]+clock1[0] for i in range(n)]*2
+    clock2_degree=[clock2[i+1]-clock2[i] if i!=n-1 else 360000-clock2[i]+clock2[0] for i in range(n)]
+    lps_list=[0 for _ in range(n)]
+    make_lps(clock2_degree,lps_list)
+    result=kmp_search(clock1_degree,clock2_degree,lps_list)
+    return "possible" if result else "impossible"
+
+# print(bj_10266())
+
+def bj_2252():
+    n,m=map(int,input().split())
+    indegree=[0 for _ in range(n+1)]
+    graph=[[] for _ in range(n+1)]
+    for i in range(m):
+        a,b=map(int,input().split())
+        graph[a].append(b)
+        indegree[b]+=1
+    to_do_list=deque([i for i in range(1,n+1) if indegree[i]==0])
+    result=[]
+    while len(to_do_list):
+        do=to_do_list.popleft() 
+        result.append(do)
+        for to_do in graph[do]:
+            indegree[to_do]-=1
+            if indegree[to_do]==0:
+                to_do_list.append(to_do)
+    
+    return result
+
+result=bj_2252()
+for node in result:
+    print(node,end=' ')
