@@ -879,6 +879,66 @@ def bj_2252():
     
     return result
 
-result=bj_2252()
-for node in result:
-    print(node,end=' ')
+# result=bj_2252()
+# for node in result:
+#     print(node,end=' ')
+
+def bj_3665():
+    t=int(input())
+    False_case="IMPOSSIBLE"
+    result=[]
+    for _ in range(t):
+        n=int(input())
+        graph=[[] for _ in range(n+1)]
+        indegree=[0 for _ in range(n+1)]
+        st_list=list(map(int,input().split()))
+        
+        for i,node in enumerate(st_list):
+            graph[node]=st_list[i+1:]
+            indegree[node]=i
+
+        m=int(input())
+        m_list=[list(map(int,input().split())) for _ in range(m)]
+
+        for node1,node2 in m_list:
+            if node2 in graph[node1]:
+                graph[node1].remove(node2)
+                indegree[node1]+=1
+                graph[node2].append(node1)
+                indegree[node2]-=1
+            else:
+                graph[node2].remove(node1)
+                indegree[node2]+=1
+                graph[node1].append(node2)
+                indegree[node1]-=1
+
+        update_st_list=[]
+        to_do_list=deque([i for i in range(1,n+1) if indegree[i]==0])
+        
+        not_sure_flag=True
+        while len(to_do_list)>0:
+            if len(to_do_list)>1:
+                result.append("?")
+                not_sure_flag=False
+            do=to_do_list.popleft()
+            update_st_list.append(do)
+            for to_do in graph[do]:
+                indegree[to_do]-=1
+                if indegree[to_do]==0:
+                    to_do_list.append(to_do)
+        if not_sure_flag==False:
+            continue
+        if len(update_st_list)!=n:
+            result.append(False_case)
+        else:
+            result.append(update_st_list)        
+    return result
+
+result=bj_3665()
+for st in result:
+    if isinstance(st,str):
+        print(st)
+    else:
+        print(" ".join(map(str,st)))
+#사이클이 된다면 큐에 추가 X
+#큐의 갯수가 2이상이라면 순위를 확정 X
